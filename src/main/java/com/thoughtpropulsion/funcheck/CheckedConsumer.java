@@ -20,6 +20,11 @@ import java.util.function.Consumer;
 
 @FunctionalInterface
 public interface CheckedConsumer<T> {
+
+  static <T> CheckedConsumer<T> of(final CheckedConsumer<T> methodReference) {
+    return methodReference;
+  }
+
   void accept(T val) throws Throwable;
 
   default Consumer<T> unchecked() {

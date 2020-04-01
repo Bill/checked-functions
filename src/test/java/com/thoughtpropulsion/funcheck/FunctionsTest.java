@@ -27,13 +27,13 @@ class FunctionsTest {
   }
 
   @Test
-  public void checkedFunction0AsSupplierRuns() {
+  public void checkedSupplierAsSupplierRuns() {
     final Integer val = invokeSupplier(() -> 1);
     assertThat(val).isEqualTo(1);
   }
 
   @Test
-  public void checkedFunction0AsSupplierThrows() {
+  public void checkedSupplierAsSupplierThrows() {
     assertThatThrownBy( () ->
         invokeSupplier( () -> {throw new IllegalArgumentException("bad");}))
         .isInstanceOf(IllegalArgumentException.class);

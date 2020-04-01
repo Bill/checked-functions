@@ -18,6 +18,11 @@ import static com.thoughtpropulsion.funcheck.SneakyThrowCheckedRunnable.sneakyTh
 
 @FunctionalInterface
 public interface CheckedRunnable {
+
+  static CheckedRunnable of(final CheckedRunnable methodReference) {
+    return methodReference;
+  }
+
   void apply() throws Throwable;
 
   default Runnable unchecked() {

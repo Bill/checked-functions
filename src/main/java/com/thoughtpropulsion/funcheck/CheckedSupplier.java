@@ -14,12 +14,17 @@
  */
 package com.thoughtpropulsion.funcheck;
 
-import static com.thoughtpropulsion.funcheck.SneakyThrowCheckedFunction0.sneakyThrow;
+import static com.thoughtpropulsion.funcheck.SneakyThrowCheckedSupplier.sneakyThrow;
 
 import java.util.function.Supplier;
 
 @FunctionalInterface
-public interface CheckedFunction0<R> {
+public interface CheckedSupplier<R> {
+
+  static <R> CheckedSupplier<R> of(final CheckedSupplier<R> methodReference) {
+    return methodReference;
+  }
+
   R apply() throws Throwable;
 
   default Supplier<R> unchecked() {
@@ -34,7 +39,7 @@ public interface CheckedFunction0<R> {
 }
 
 
-interface SneakyThrowCheckedFunction0 {
+interface SneakyThrowCheckedSupplier {
   @SuppressWarnings("unchecked")
   static <E extends Throwable, R> R sneakyThrow(final Throwable e) throws E {
     throw (E) e;

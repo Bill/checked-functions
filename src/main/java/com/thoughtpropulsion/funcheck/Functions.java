@@ -25,7 +25,7 @@ public class Functions {
     return checked.unchecked();
   }
 
-  public static <T> Supplier<T> unchecked(final CheckedFunction0<T> checked) {
+  public static <T> Supplier<T> unchecked(final CheckedSupplier<T> checked) {
     return checked.unchecked();
   }
 
