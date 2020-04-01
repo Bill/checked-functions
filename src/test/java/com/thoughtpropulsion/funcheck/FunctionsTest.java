@@ -13,14 +13,14 @@ import org.junit.jupiter.api.Test;
 class FunctionsTest {
 
   @Test
-  public void checkedThunkAsRunnableRuns() {
+  public void checkedRunnableAsRunnableRuns() {
     final AtomicBoolean flag = new AtomicBoolean(false);
     invokeRunnable( () -> flag.set(true));
     assertThat(flag.get()).isTrue();
   }
 
   @Test
-  public void checkedThunkAsRunnableThrows() {
+  public void checkedRunnableAsRunnableThrows() {
     assertThatThrownBy( () ->
         invokeRunnable( () -> {throw new IllegalArgumentException("bad");}))
         .isInstanceOf(IllegalArgumentException.class);

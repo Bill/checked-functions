@@ -21,7 +21,7 @@ public class Functions {
 
   private Functions() {};
 
-  public static <T> Runnable unchecked(final CheckedThunk checked) {
+  public static <T> Runnable unchecked(final CheckedRunnable checked) {
     return checked.unchecked();
   }
 

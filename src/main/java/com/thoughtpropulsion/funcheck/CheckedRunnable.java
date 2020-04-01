@@ -14,10 +14,10 @@
  */
 package com.thoughtpropulsion.funcheck;
 
-import static com.thoughtpropulsion.funcheck.SneakyThrowCheckedThunk.sneakyThrow;
+import static com.thoughtpropulsion.funcheck.SneakyThrowCheckedRunnable.sneakyThrow;
 
 @FunctionalInterface
-public interface CheckedThunk {
+public interface CheckedRunnable {
   void apply() throws Throwable;
 
   default Runnable unchecked() {
@@ -32,7 +32,7 @@ public interface CheckedThunk {
 }
 
 
-interface SneakyThrowCheckedThunk {
+interface SneakyThrowCheckedRunnable {
   @SuppressWarnings("unchecked")
   static <E extends Throwable, R> R sneakyThrow(final Throwable e) throws E {
     throw (E) e;
