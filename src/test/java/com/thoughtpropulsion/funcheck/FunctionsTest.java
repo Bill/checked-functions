@@ -15,51 +15,51 @@ class FunctionsTest {
   @Test
   public void checkedRunnableAsRunnableRuns() {
     final AtomicBoolean flag = new AtomicBoolean(false);
-    invokeRunnable( () -> flag.set(true));
+    final CheckedRunnable checked = CheckedRunnable.of(() -> flag.set(true));
+    final Runnable unchecked = checked.unchecked();
+    unchecked.run();
     assertThat(flag.get()).isTrue();
   }
 
   @Test
   public void checkedRunnableAsRunnableThrows() {
-    assertThatThrownBy( () ->
-        invokeRunnable( () -> {throw new IllegalArgumentException("bad");}))
+    final CheckedRunnable checked = CheckedRunnable.of(() -> {throw new IllegalArgumentException("bad");});
+    final Runnable unchecked = checked.unchecked();
+    assertThatThrownBy(unchecked::run)
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   public void checkedSupplierAsSupplierRuns() {
-    final Integer val = invokeSupplier(() -> 1);
+    final CheckedSupplier<Integer> checked = CheckedSupplier.of(() -> 1);
+    final Supplier<Integer> unchecked = checked.unchecked();
+    final Integer val = unchecked.get();
     assertThat(val).isEqualTo(1);
   }
 
   @Test
   public void checkedSupplierAsSupplierThrows() {
-    assertThatThrownBy( () ->
-        invokeSupplier( () -> {throw new IllegalArgumentException("bad");}))
+    final CheckedSupplier<Integer> checked = CheckedSupplier.of(() -> {throw new IllegalArgumentException("bad");});
+    final Supplier<Integer> unchecked = checked.unchecked();
+    assertThatThrownBy(unchecked::get)
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   public void checkedConsumerAsConsumerRuns() {
     final AtomicInteger val = new AtomicInteger(0);
-    invokeConsumer( val2 -> {val.set(val2);}, 1);
+    final CheckedConsumer<Integer> checked = CheckedConsumer.of(val::set);
+    final Consumer<Integer> unchecked = checked.unchecked();
+    unchecked.accept(1);
     assertThat(val.get()). isEqualTo(1);
   }
 
   @Test
   public void checkedConsumerAsConsumerThrows() {
-    assertThatThrownBy( () ->
-        invokeConsumer( val -> {throw new IllegalArgumentException("bad");}, 1))
+    final CheckedConsumer<Integer> checked = CheckedConsumer.of((x) -> {throw new IllegalArgumentException("bad");});
+    final Consumer<Integer> unchecked = checked.unchecked();
+    assertThatThrownBy( () -> unchecked.accept(1))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
-  private static void invokeRunnable(final Runnable runnable) {
-    runnable.run();
-  }
-  private static <T> T invokeSupplier(final Supplier<T> supplier) {
-    return supplier.get();
-  }
-  private static <T> void invokeConsumer(final Consumer<T> consumer, final T val) {
-    consumer.accept(val);
-  }
 }
