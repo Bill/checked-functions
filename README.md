@@ -6,19 +6,84 @@ This little library gives you a twin interface for each of those. But the twin i
 Example:
 
 ```java
+public class ExampleTest {
+
+  // a checked exception
+  static class Bad extends Exception {
+  }
+
+  // a method that needs a Runnable. Runnables can't throw checked exceptions
   private static void invokeRunnable(final Runnable runnable) {
     runnable.run();
   }
 
-  private void foo() {
+  @Test
+  public void compilesAndThrows() {
     final boolean state = true;
-    invokeRunnable( () -> {
-      if (state)
-        throw new IllegalStateException();
-      else
-        System.out.println("Ran!");
-    });
+
+    assertThatThrownBy(
+        () ->
+            invokeRunnable(
+                () -> {
+                  if (state) {
+                    throw new Bad();
+                  } else {
+                    System.out.println("Ran!");
+                  }
+                })).isInstanceOf(Bad.class);
   }
+}
 ```
 
-In the example `invokeRunnable()` wants a `Runnable`. Syntactically, we've supplied it a `Runnable` down in `foo()`. But what we actually supplied was a `CheckedThunk` which is allowed to throw checked exceptions, so this compiles!
+In the example `invokeRunnable()` wants a `Runnable`. But this won't compile because the lambda we are passing throws a checked exception.
+
+We could try this instead:
+
+```java
+public class ExampleTest {
+  @Test
+  public void compilesAndThrows() {
+    final boolean state = true;
+
+    assertThatThrownBy(
+        () ->
+            invokeRunnable(
+                () -> {
+                  if (state) {
+                    try {
+                      throw new Bad();
+                    } catch (Bad bad) {
+                      // !! NOW WHAT?!?
+                    }
+                  } else {
+                    System.out.println("Ran!");
+                  }
+                })).isInstanceOf(Bad.class);
+  }
+}
+```
+
+While this compiles, it leaves us wondering what to do in the `catch` block?
+
+`CheckedRunnable` disguises a checked-exception-throwing lambda as a `Runnable` like this:
+
+```java
+public class ExampleTest {
+  @Test
+  public void compilesAndThrows() {
+    final boolean state = true;
+    assertThatThrownBy(
+        () ->
+    invokeRunnable(
+        CheckedRunnable.of(() -> {
+          if (state) {
+            throw new Bad();
+          } else {
+            System.out.println("Ran!");
+          }
+        }).unchecked())).isInstanceOf(Bad.class);
+  }
+}
+```
+
+We used `CheckedRunnable.of()` to construct a `CheckedRunnable` from our lambda and then we used `unchecked()` to convert that into a `Runnable`. But as you can see, not only does this compile, but also the checked exception propagates at runtime.
