@@ -86,4 +86,4 @@ public class ExampleTest {
 }
 ```
 
-We used `CheckedRunnable.of()` to construct a `CheckedRunnable` from our lambda and then we used `unchecked()` to convert that into a `Runnable`. But as you can see, not only does this compile, but also the checked exception propagates at runtime.
+We used `CheckedRunnable.of()` to construct a `CheckedRunnable` from our lambda and then we used `unchecked()` to convert that into a `Runnable`. As you can see, not only does this compile, but also the checked exception propagates at runtime.
